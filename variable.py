@@ -16,6 +16,9 @@ class Domain:
 		self.minValue = minValue
 		self.maxValue = maxValue
 
+	def __init__(self, values):
+		self.values = values
+
 class Constraint:
 
 	def __init__(self, variable, allowedDomain):
