@@ -45,6 +45,16 @@ class ExpressionConstraint(Constraint):
 	def isSatisfied(self):
 		return function(op)(variable1.value, variable2.value)
 
+class AllDiffConstraint(Constraint):
+	def __init__(self, variables):
+		self.variables = variables
+
+	def isSatisfied(self):
+		valueSet = set([var.value for var in variables])
+		for var in variables:
+			valueSet.add(var.value)
+		return len(variables) == len(valueSet)
+
 
 class Model:
 	def __init__(self, variables):
