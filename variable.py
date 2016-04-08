@@ -2,21 +2,19 @@ import operator
 
 class Variable:
     
-    def __init__(self, name, value, domain):
+    def __init__(self, name, domain):
         self.name = name
-        self.value = value
+        self.value = None
         self.domain = domain
-
-    def belongs(self, domain):
-    	return self.value in domain.values
+        self.flag = "new"
 
 class Domain:
 
-	def __init__(self, minValue, maxValue):
-		self.values = range(minValue, maxValue)
-
 	def __init__(self, values):
 		self.values = values
+
+def createDomainFromRange(minValue, maxValue):
+	return Domain(range(minValue, maxValue))
 
 class Constraint:
 
