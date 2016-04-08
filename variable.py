@@ -32,7 +32,7 @@ class Constraint:
 		return variable.belongs(allowedDomain)
 
 
-class ExpressionConstraint(Constraint):
+class BinaryConstraint(Constraint):
 	def __init__(self, variable1, variable2, op):
 		self.variable1 = variable1
 		self.variable2 = variable2
@@ -51,12 +51,7 @@ class AllDiffConstraint(Constraint):
 			valueSet.add(var.value)
 		return len(variables) == len(valueSet)
 
-
-class Model:
-	def __init__(self, variables):
-		self.variables = variables
-
 class Problem:
-	def __init__(self, model, constraints):
-		self.model = model
+	def __init__(self, variables, constraints):
+		self.variables = variables
 		self.constraints = constraints
