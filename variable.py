@@ -8,16 +8,12 @@ class Variable:
         self.domain = domain
 
     def belongs(self, domain):
-    	if domain.values is none:
-    		return self.value >= domain.minValue and self.value <= domain.maxValue
-    	else:
-    		return self.value in domain.values
+    	return self.value in domain.values
 
 class Domain:
 
 	def __init__(self, minValue, maxValue):
-		self.minValue = minValue
-		self.maxValue = maxValue
+		self.values = range(minValue, maxValue)
 
 	def __init__(self, values):
 		self.values = values
