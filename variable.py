@@ -8,7 +8,10 @@ class Variable:
         self.domain = domain
 
     def belongs(self, domain):
-    	return self.value >= domain.minValue and self.value <= domain.maxValue
+    	if domain.values is none:
+    		return self.value >= domain.minValue and self.value <= domain.maxValue
+    	else:
+    		return self.value in domain.values
 
 class Domain:
 
@@ -35,18 +38,8 @@ class ExpressionConstraint(Constraint):
 		self.variable2 = variable2
 		self.op = op
 
-	def function(op):
-	    return {
-	        '<' : operator.__lt__,
-	        '<=' : operator.__le__,
-	        '>' : operator.__gt__,
-	        '>=' : operator.__ge__,
-	        '==' : operator.__eq__,
-	        '!=' : operator.__ne__,
-	        }[op]
-
 	def isSatisfied(self):
-		return function(op)(variable1.value, variable2.value)
+		return op(variable1.value, variable2.value)
 
 class AllDiffConstraint(Constraint):
 	def __init__(self, variables):
