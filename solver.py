@@ -19,6 +19,7 @@ class Solver:
 	def revise(self, future, present):
 		# find the constraint about these two, 
 		# mark the ones that do not satisfy with X, thus removing them from the domain
+		# could do without Xs, but helps seeing
 		# remember them in a list.
 		# if anything has an empty domain, return false
 		removed = []
@@ -37,12 +38,12 @@ class Solver:
 					print "XXX"
 					future.domain.flags[index] = "X"
 					removed.append(index) # append the index of the pruned value
-				if future.domain.flags[index] is not "X" and domain_not_empty == False:
-					domain_not_empty = True
+				else:
+				    domain_not_empty = True
 		return (domain_not_empty, removed)
 
 	def showSolution(self):
-		print "|Solution:"
+		print "|Solution:======================================================================"
 		for var in self.problem.variables:
 			print "|" + var.name + ": " + str(var.value)
 		print "|_________"
