@@ -1,3 +1,5 @@
+from variable import *
+
 class Solver:
 	def __init__(self, problem):
 		self.problem = problem
@@ -33,9 +35,10 @@ class Solver:
 			# var2 now has a value. So have to revise the domain of var1
 			for index in range(len(future.domain.values)):
 				satisfies = constraint.valuesSatisfy(present.value, future.domain.values[index])
-				print str(present.value) + " and " + str(future.domain.values[index]) + " " +str(satisfies) + " the constraint"
+				print str(present.value) + " and " + str(future.domain.values[index]) + " " +str(satisfies) + " the constraint",
+				print_constraint(constraint)
 				if not satisfies:
-					print "XXX"
+					print str(future.domain.values[index]) + " -> X"
 					future.domain.flags[index] = "X"
 					removed.append(index) # append the index of the pruned value
 				else:
@@ -80,7 +83,6 @@ class Solver:
 			for future in range(depth+1, self.n):
 				print "FUTURE " + str(future)
 				result = self.revise(self.getVariableByDepth(future), var)
-				self.print_state()
 				removed = result[1]
 				consistent = result[0]
 				if not consistent:

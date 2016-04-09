@@ -50,3 +50,29 @@ class Problem:
 	def __init__(self, variables, constraints):
 		self.variables = variables
 		self.constraints = constraints
+		self.print_info()
+
+	def print_info(self):
+		print "Problem: ~~~~~~~~~~~~~~~~~"
+		print "GIVEN"
+		for variable in self.variables:
+			print variable.name,
+			print variable.domain.values 
+		print "SUCH THAT"
+		for constraint in self.constraints:
+			print_constraint(constraint)
+		print "~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
+def print_constraint(constraint):
+	print constraint.variable1.name + get_op_string(constraint.op) + constraint.variable2.name
+
+def get_op_string(op):
+	options = {
+		   operator.__eq__ : " = ",
+           operator.__ne__ : " != ",
+           operator.__lt__ : " < ",
+           operator.__le__ : " <= ",
+           operator.__gt__ : " > ",
+           operator.__ge__ : " >= ",
+	}
+	return options[op]
