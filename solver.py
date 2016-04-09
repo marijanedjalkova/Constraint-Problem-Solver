@@ -5,6 +5,8 @@ class Solver:
 		self.problem = problem
 		self.n = len(problem.variables)
 		self.ordering = ordering
+		if ordering == 1:
+			# create a copy of the list
 
 	def getNextVariable(self, depth):
 		if self.ordering==0:
@@ -29,7 +31,7 @@ class Solver:
 			domain_size = 0
 			for value in variable.domain:
 				if value.flag != "X":
-					domain_size++
+					domain_size += 1
 			if domain_size < min_domain:
 				min_domain = domain_size
 				min_domain_index = index
@@ -69,7 +71,7 @@ class Solver:
 			# var2 now has a value. So have to revise the domain of var1
 			for index in range(len(future.domain.values)):
 				satisfies = constraint.valuesSatisfy(future.domain.values[index], present.value)
-				print str(present.value) + " and " + str(future.domain.values[index]) + " " +str(satisfies) + " the constraint",
+				print str(future.domain.values[index]) + " and " + str(present.value) + " " +str(satisfies) + " the constraint",
 				print_constraint(constraint)
 				if not satisfies:
 					print str(future.domain.values[index]) + " -> X"

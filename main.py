@@ -27,6 +27,6 @@ if __name__ == '__main__':
 	constraints=[ec, ec2]
 	problem = Problem(variables, constraints)
 	
-	solver = Solver(problem)
+	solver = Solver(problem, 0)
 	solver.forwardCheck(0)
 
