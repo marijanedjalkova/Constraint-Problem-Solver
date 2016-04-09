@@ -11,11 +11,17 @@ class Solver:
 	def assign(self, var, value_index):
 		if var.domain.flags[value_index] is not "X":
 			var.value = var.domain.values[value_index]
+		else: 
+			var.value = None
 
 	def findConstraint(self, var1, var2):
 		for constraint in self.problem.constraints:
-			if constraint.variable1.name == var1.name and constraint.variable2.name == var2.name:
-				return constraint
+			if isinstance(constraint, ExpressionConstraint):
+				if findVarName(constraint.lhs) == var1.name and findVarName(constraint.rhs) == var2.name:
+					return constraint
+			else:
+				if constraint.lhs.name == var1.name and constraint.rhs.name == var2.name:
+					return constraint
 		return None
 
 	def revise(self, future, present):
@@ -26,7 +32,7 @@ class Solver:
 		# if anything has an empty domain, return false
 		removed = []
 		constraint = self.findConstraint(future, present)
-		if constraint == None:
+		if constraint is None:
 			# all fine, the veraibles do not depend on each other
 			print "No constraints for " + future.name + " and " + present.name
 			return (True, removed)
@@ -34,7 +40,7 @@ class Solver:
 			domain_not_empty = False
 			# var2 now has a value. So have to revise the domain of var1
 			for index in range(len(future.domain.values)):
-				satisfies = constraint.valuesSatisfy(present.value, future.domain.values[index])
+				satisfies = constraint.valuesSatisfy(future.domain.values[index], present.value)
 				print str(present.value) + " and " + str(future.domain.values[index]) + " " +str(satisfies) + " the constraint",
 				print_constraint(constraint)
 				if not satisfies:
