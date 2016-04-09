@@ -1,12 +1,40 @@
 from variable import *
 
 class Solver:
-	def __init__(self, problem):
+	def __init__(self, problem, ordering):
 		self.problem = problem
 		self.n = len(problem.variables)
+		self.ordering = ordering
+
+	def getNextVariable(self, depth):
+		if self.ordering==0:
+			# default
+			return self.getVariableByDepth(depth)
+		else:
+			if self.ordering==1:
+				# dynamic
+				return self.getVariableByDomain()
+			else:
+				# mb static given by user
+				pass
 
 	def getVariableByDepth(self, depth):
 		return self.problem.variables[depth]
+
+	def getVariableByDomain(self):
+		min_domain = len(self.problem.variables[0])
+		min_domain_index = 0
+		for index in range(len(self.problem.variables)):
+			variable = self.problem.variables[index]
+			domain_size = 0
+			for value in variable.domain:
+				if value.flag != "X":
+					domain_size++
+			if domain_size < min_domain:
+				min_domain = domain_size
+				min_domain_index = index
+		return min_domain_index # TODO need to delete it from the list of variables!
+
 
 	def assign(self, var, value_index):
 		if var.domain.flags[value_index] is not "X":
@@ -77,9 +105,11 @@ class Solver:
 			print var.domain.flags
 		print "__________"
 
+
+
 	def forwardCheck(self, depth):
 		print "DEPTH: " + str(depth)
-		var = self.getVariableByDepth(depth)
+		var = self.getNextVariable(depth)
 		for value_index in range(len(var.domain.values)):
 			self.assign(var, value_index)
 			if var.value is None:

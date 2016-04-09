@@ -100,10 +100,7 @@ class ExpressionConstraint(Constraint):
 		return self.op(lvalue, rvalue)
 
 
-
-
-
-class BinaryConstraint(Constraint):
+class BinaryConstraint(ExpressionConstraint):
 	def __init__(self, lhs, rhs, op):
 		self.lhs = lhs
 		self.rhs = rhs
@@ -128,6 +125,7 @@ class AllDiffConstraint(Constraint):
 		for index in range(len(self.variables) - 1):
 			constraints.append(BinaryConstraint(self.variables[index], self.variables[index + 1], operator.__ne__))
 			constraints.append(BinaryConstraint(self.variables[index + 1], self.variables[index], operator.__ne__))
+		return constraints
 
 class Problem:
 	def __init__(self, variables, constraints):
@@ -159,6 +157,9 @@ def get_op_string(op):
            operator.__le__ : " <= ",
            operator.__gt__ : " > ",
            operator.__ge__ : " >= ",
-           operator.__add__ : " + "
+           operator.__add__ : " + ",
+           operator.__mul__ : " * ",
+           operator.__div__ : " / ",
+           operator.__sub__ : " - ",
 	}
 	return options[op]
