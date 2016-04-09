@@ -6,12 +6,12 @@ class Variable:
         self.name = name
         self.value = None
         self.domain = domain
-        self.flag = "new"
 
 class Domain:
 
 	def __init__(self, values):
 		self.values = values
+		self.flags = ["new" for i in range(len(values))]
 
 def createDomainFromRange(minValue, maxValue):
 	return Domain(range(minValue, maxValue))
@@ -23,7 +23,7 @@ class Constraint:
 		self.allowedDomain = allowedDomain
 
 	def isSatisfied(self):
-		return variable.belongs(allowedDomain)
+		return self.variable.belongs(self.allowedDomain)
 
 
 class BinaryConstraint(Constraint):
@@ -33,17 +33,18 @@ class BinaryConstraint(Constraint):
 		self.op = op
 
 	def isSatisfied(self):
-		return op(variable1.value, variable2.value)
+		return self.op(self.variable1.value, self.variable2.value)
+
+	def valuesSatisfy(self, value1, value2):
+		return self.op(value1, value2)
 
 class AllDiffConstraint(Constraint):
 	def __init__(self, variables):
 		self.variables = variables
 
 	def isSatisfied(self):
-		valueSet = set([var.value for var in variables])
-		for var in variables:
-			valueSet.add(var.value)
-		return len(variables) == len(valueSet)
+		valueSet = set([var.value for var in self.variables])
+		return len(self.variables) == len(valueSet)
 
 class Problem:
 	def __init__(self, variables, constraints):
