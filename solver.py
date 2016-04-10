@@ -67,8 +67,7 @@ class Solver:
 		removed = []
 		constraint = self.findConstraint(future, present)
 		if constraint is None:
-			# all fine, the veraibles do not depend on each other
-			print "No constraints for " + future.name + " and " + present.name
+			# variables do not depend on each other
 			return (True, removed)
 		else:
 			domain_not_empty = False
@@ -78,7 +77,6 @@ class Solver:
 				print str(future.domain.values[index]) + " and " + str(present.value) + " " +str(satisfies) + " the constraint",
 				print_constraint(constraint)
 				if not satisfies:
-					print str(future.domain.values[index]) + " -> X"
 					future.domain.flags[index] = "X"
 					removed.append(index) # append the index of the pruned value
 				else:
@@ -96,9 +94,6 @@ class Solver:
 		for index in change_list:
 			var.domain.flags[index]="new"
 		self.undo_assignment()
-		print var.domain.values
-		print var.domain.flags
-		print "pruning undone"
 
 	def undo_assignment(self):
 		lastAssigned = self.assignedVariables.pop(-1)
@@ -117,10 +112,11 @@ class Solver:
 		print "__________"
 
 	def print_vars(self):
-		print "still to assign:",
-		print [var.name for var in self.copiedVariables]
 		print "assignedVariables: ",
 		print [var.name for var in self.assignedVariables]
+		print "still to assign:",
+		print [var.name for var in self.copiedVariables]
+
 
 	def forwardCheck(self, depth):
 		print "DEPTH: " + str(depth)

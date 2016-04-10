@@ -90,8 +90,6 @@ class ExpressionConstraint(Constraint):
 		return self.op(self.lhs.evaluate(), self.rhs.evaluate())
 
 	def valuesSatisfy(self, value1, value2):
-		print "TESTING values " + str(value1) + " and " + str(value2)
-		print "for constraint " + self.lhs.name + get_op_string(self.op) + self.rhs.name
 		# have to substitute values in the expression.
 		# Both lhs and rhs are either variables or "x+2" type expressions
 		if isinstance(self.lhs, Variable):
@@ -105,8 +103,6 @@ class ExpressionConstraint(Constraint):
 		else:
 			# it's an expression
 			rvalue = self.rhs.substitute(value2)
-		print "lvalue = " + str(lvalue),
-		print ", rvalue = " + str(rvalue) + " op=" + get_op_string(self.op)
 		return self.op(lvalue, rvalue)
 
 
