@@ -120,9 +120,18 @@ class AllDiffConstraint(Constraint):
 	def to_binary(self):
 		constraints = []
 		for index in range(len(self.variables) - 1):
-			constraints.append(ExpressionConstraint(createExpressionFromVar(self.variables[index]), createExpressionFromVar(self.variables[index + 1]), operator.__ne__))
-			constraints.append(ExpressionConstraint(createExpressionFromVar(self.variables[index + 1]), createExpressionFromVar(self.variables[index]), operator.__ne__))
+			for second_index in range(index + 1, len(self.variables)):
+				constraints.append(ExpressionConstraint(createExpressionFromVar(self.variables[index]), createExpressionFromVar(self.variables[second_index]), operator.__ne__))
+				constraints.append(ExpressionConstraint(createExpressionFromVar(self.variables[second_index]), createExpressionFromVar(self.variables[index]), operator.__ne__))
 		return constraints
+
+class OptimisationConstraint(Constraint):
+	def __init__(self, variable, option):
+		self.variable = variable
+		self.option = option # option is boolean for minimising / maximising
+
+	def to_binary(self):
+		pass
 
 class Problem:
 	def __init__(self, variables, constraints):

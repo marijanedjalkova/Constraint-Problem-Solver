@@ -21,7 +21,7 @@ class Solver:
 				pass
 
 	def getVariableByDepth(self, depth):
-		res = self.copiedVariables.pop(0)
+		res = self.copiedVariables.pop(0) # this pop works
 		self.assignedVariables.append(res)
 		return res
 
@@ -37,7 +37,7 @@ class Solver:
 			if domain_size < min_domain:
 				min_domain = domain_size
 				min_domain_index = index
-		res = self.copiedVariables.pop(min_domain_index)
+		res = self.copiedVariables.pop(min_domain_index) # this pop works
 		self.assignedVariables.append(res)
 		return res 
 
@@ -100,7 +100,7 @@ class Solver:
 		self.undo_assignment()
 
 	def undo_assignment(self):
-		lastAssigned = self.assignedVariables.pop(-1)
+		lastAssigned = self.assignedVariables.pop(-1) # this pop works!
 		self.copiedVariables = [lastAssigned] + self.copiedVariables
 
 	def print_state(self):
