@@ -32,7 +32,10 @@ def findVarName(expression):
 	if isinstance(expression.left, Variable):
 		return expression.left.name
 	else:
-		return findVarName(expression.left)
+		if isinstance(expression.left, Expression):
+			return findVarName(expression.left)
+		else:
+			return None
 
 def createExpressionFromVar(variable):
 	return Expression(variable, None, None)

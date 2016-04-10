@@ -68,6 +68,7 @@ class Solver:
 		constraint = self.findConstraint(future, present)
 		if constraint is None:
 			# variables do not depend on each other
+			# print "No constraints for " + future.name + " and " + present.name
 			return (True, removed)
 		else:
 			domain_not_empty = False
@@ -92,8 +93,8 @@ class Solver:
 
 	def undoPruning(self, change_list, depth):
 		var = self.assignedVariables[-1]
-		print "changes for variable: " + var.name,
-		print change_list
+		# print "changes for variable: " + var.name,
+		# print change_list
 		for index in change_list:
 			var.domain.flags[index]="new"
 		self.undo_assignment()
@@ -123,7 +124,7 @@ class Solver:
 
 	def forwardCheck(self, depth):
 		print "DEPTH: " + str(depth)
-		self.print_vars()
+		# self.print_vars()
 		var = self.getNextVariable(depth)
 		for value_index in range(len(var.domain.values)):
 			self.assign(var, value_index)
@@ -133,7 +134,7 @@ class Solver:
 			consistent = True
 			for future in range(depth+1, self.n):
 				print "FUTURE " + str(future)
-				self.print_vars()
+				# self.print_vars()
 				result = self.revise(self.getNextVariable(future), var)
 				removed = result[1]
 				consistent = result[0]

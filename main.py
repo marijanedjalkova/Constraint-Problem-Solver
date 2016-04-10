@@ -8,6 +8,10 @@ if __name__ == '__main__':
 	d2 = createDomainFromRange(2, 4)
 	d3 = Domain([2, 7, 6, 5, 9])
 
+	# v2 = 5 will be expressed as
+	# a variable v2 equal to a variable with domain [5]
+	# yes, give it a name
+
 	v1 = Variable("v1", d1)
 	v2 = Variable("v2", d2)
 	v3 = Variable("v3", d3)
@@ -21,14 +25,15 @@ if __name__ == '__main__':
 	c3 = ExpressionConstraint(ev2, ev3, operator.__ne__)
 	c4 = ExpressionConstraint(ev3, ev2, operator.__ne__)
 
+
 	exp1 = Expression(v2, 1, operator.__add__) # v1 + 1
-	exp2 = Expression(v1, None, None)
+	exp2 = Expression(5, None, None)
 	ec = ExpressionConstraint(exp1, exp2, operator.__eq__) # v1 + 1 = v2
 	ec2 = ExpressionConstraint(exp2, exp1, operator.__eq__) # v2 = v1 + 1
 
 
-	variables=[v1, v2, v3]
-	constraints=[c1, c2, c3, c4]
+	variables=[v1, v2]
+	constraints=[ec, ec2]
 	problem = Problem(variables, constraints)
 	
 	solver = Solver(problem, 1)
