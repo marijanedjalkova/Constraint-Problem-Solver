@@ -1,4 +1,5 @@
 from variable import *
+import sys
 
 class Solver:
 	def __init__(self, problem, ordering):
@@ -64,6 +65,7 @@ class Solver:
 		# could do without Xs, but helps seeing
 		# remember them in a list.
 		# if anything has an empty domain, return false
+
 		removed = []
 		constraint = self.findConstraint(future, present)
 		if constraint is None:
@@ -74,15 +76,17 @@ class Solver:
 			domain_not_empty = False
 			# var2 now has a value. So have to revise the domain of var1
 			for index in range(len(future.domain.values)):
-				satisfies = constraint.valuesSatisfy(future.domain.values[index], present.value)
-				# print str(future.domain.values[index]) + " and " + str(present.value) + " " +str(satisfies) + " the constraint",
-				# print_constraint(constraint)
-				if not satisfies:
-					# print str(future.domain.values[index]) + " -> X"
-					future.domain.flags[index] = "X"
-					removed.append(index) # append the index of the pruned value
-				else:
-				    domain_not_empty = True
+				if future.domain.flags[index] != "X":
+					satisfies = constraint.valuesSatisfy(future.domain.values[index], present.value)
+					# print str(future.domain.values[index]) + " and " + str(present.value) + " " +str(satisfies) + " the constraint",
+					# print_constraint(constraint)
+					if not satisfies:
+						print str(future.domain.values[index]) + " -> X"
+						future.domain.flags[index] = "X"
+						removed.append(index) # append the index of the pruned value
+					else:
+						#print "domain_not_empty for " + future.name + " with value " + str(future.domain.values[index])
+						domain_not_empty = True 
 		return (domain_not_empty, removed)
 
 	def showSolution(self):
@@ -111,8 +115,14 @@ class Solver:
 	def print_state(self):
 		print "STATE:______"
 		for var in self.problem.variables:
-			print var.domain.values
-			print var.domain.flags
+			print var.name + ": ",
+			for index in range(len(var.domain.values)):
+				if var.domain.flags[index] == "X":
+					symbol = "X"
+				else:
+					symbol = str(var.domain.values[index])
+				print symbol + ", ",
+			print " "
 		print "__________"
 
 	def print_vars(self):
@@ -127,27 +137,39 @@ class Solver:
 		# self.print_vars()
 		var = self.getNextVariable(depth)
 		for value_index in range(len(var.domain.values)):
+			print "depth " + str(depth)
+			#if (depth + 1 + len(self.copiedVariables)) < 81:
+			#	print "Ahhhhh" + str(depth + 1 + len(self.copiedVariables))
 			self.assign(var, value_index)
 			if var.value is None:
+			#	print "continue"
 				continue
+			#self.print_state()
 			print "-> " + var.name + " = " + str(var.value)
+			#if (depth + 1 + len(self.copiedVariables)) < 81:
+			#	print "Ohhhhh"
 			consistent = True
 			for future in range(depth+1, self.n):
+				#print "~~~~~~~~~~~~~~~~~~~~~~~~~"
 				print "FUTURE " + str(future)
 				# self.print_vars()
+				#if future + len(self.copiedVariables) < 81: # this needs fixing
+					#print "Problem "
+					#sys.exit()
 				result = self.revise(self.getNextVariable(future), var)
 				removed = result[1]
 				consistent = result[0]
 				if not consistent:
-					print "not consistent, backtrack"
+					print "not consistent, backtrack " + str(len(removed)) + " steps"
 					self.undoPruning(removed, future)
 					break
 			if consistent:
 				if depth == self.n - 1:
 					self.showSolution()
+					sys.exit()
 				else:
 					for future in range(depth+1, self.n):
 						self.undo_assignment()
 					self.forwardCheck(depth+1)
-		self.undo_assignment()
+			print "here"
 			

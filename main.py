@@ -2,9 +2,63 @@ from variable import *
 from solver import *
 import operator
 
+def get_square_index(square_index):
+	div = square_index / 3 
+	mod = square_index % 3 
+	return 27 * div + 3 * mod
+
+
+def mini_sudoku():
+	variables = [Variable(("v"+str(i)), createDomainFromRange(1, 4)) for i in range(9)]
+	constraints = []
+	for i in range(3):
+		current_row = variables[(i*3):(i*3 + 3)]
+		adc = AllDiffConstraint(current_row)
+		constraints.extend(adc.to_binary())
+		current_col = variables[i::3]
+		adc = AllDiffConstraint(current_col)
+		constraints.extend(adc.to_binary())
+	square = []	
+	for square_row in range(3):
+		for square_col in range(3):
+			square_new_index = square_row*3 + square_col
+			square.append(variables[square_new_index])
+	adc = AllDiffConstraint(square)
+	# constraints.extend(adc.to_binary())	
+	problem = Problem(variables, constraints)
+	
+	solver = Solver(problem, 0)
+	solver.forwardCheck(0)
+
+def sudoku():
+	variables = [Variable(("v"+str(i)), createDomainFromRange(1, 10)) for i in range(81)]
+	constraints = []
+	for i in range(9):
+		current_row = variables[(i*9):(i*9 + 9)]
+		adc = AllDiffConstraint(current_row)
+		constraints.extend(adc.to_binary())
+		current_col = variables[i::9]
+		adc = AllDiffConstraint(current_col)
+		constraints.extend(adc.to_binary())
+	for square_index in range(9):
+		square = []	
+		for square_row in range(3):
+			for square_col in range(3):
+				square_new_index = get_square_index(square_index)
+				square.append(variables[square_new_index+square_col+square_row*9])
+		adc = AllDiffConstraint(square)
+		constraints.extend(adc.to_binary())	
+	problem = Problem(variables, constraints)
+	
+	solver = Solver(problem, 0)
+	solver.forwardCheck(0)
+
+
 if __name__ == '__main__':
 	print "________________________________________________________________"
+	mini_sudoku()		
 
+	"""
 	d1 = createDomainFromRange(3, 6)
 	d2 = createDomainFromRange(2, 4)
 	d3 = Domain([2, 7, 6, 5, 9])
@@ -42,4 +96,4 @@ if __name__ == '__main__':
 	
 	solver = Solver(problem, 1)
 	solver.forwardCheck(0)
-
+	"""

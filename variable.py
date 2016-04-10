@@ -137,11 +137,11 @@ class Problem:
 	def __init__(self, variables, constraints):
 		self.variables = variables
 		self.constraints = constraints
-		self.print_info()
+		# self.print_info()
 
 	def print_info(self):
 		print "Problem: ~~~~~~~~~~~~~~~~~"
-		print "GIVEN"
+		print "FIND"
 		for variable in self.variables:
 			print variable.name,
 			print variable.domain.values 
