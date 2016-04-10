@@ -77,7 +77,7 @@ class Expression(): # can be x + 2, x - y, x, 3
 		else:
 			# right is digit, x+ 2
 			res = self.op(value, self.right)
-		print "substituting " + str(value) + " in " + self.name +  " gives " + str(res)
+		# print "substituting " + str(value) + " in " + self.name +  " gives " + str(res)
 		return res
 
 class ExpressionConstraint(Constraint):

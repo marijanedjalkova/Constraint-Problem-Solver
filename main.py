@@ -31,6 +31,6 @@ if __name__ == '__main__':
 	constraints=[c1, c2, c3, c4]
 	problem = Problem(variables, constraints)
 	
-	solver = Solver(problem, 0)
+	solver = Solver(problem, 1)
 	solver.forwardCheck(0)
 

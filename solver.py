@@ -26,13 +26,13 @@ class Solver:
 		return res
 
 	def getVariableByDomain(self):
-		min_domain = len(self.copiedVariables[0])
+		min_domain = len(self.copiedVariables[0].domain.values)
 		min_domain_index = 0
 		for index in range(len(self.copiedVariables)):
 			variable = self.copiedVariables[index]
 			domain_size = 0
-			for value in variable.domain:
-				if value.flag != "X":
+			for value_index in range(len(variable.domain.values)):
+				if variable.domain.flags[value_index] != "X":
 					domain_size += 1
 			if domain_size < min_domain:
 				min_domain = domain_size
@@ -74,9 +74,10 @@ class Solver:
 			# var2 now has a value. So have to revise the domain of var1
 			for index in range(len(future.domain.values)):
 				satisfies = constraint.valuesSatisfy(future.domain.values[index], present.value)
-				print str(future.domain.values[index]) + " and " + str(present.value) + " " +str(satisfies) + " the constraint",
-				print_constraint(constraint)
+				# print str(future.domain.values[index]) + " and " + str(present.value) + " " +str(satisfies) + " the constraint",
+				# print_constraint(constraint)
 				if not satisfies:
+					# print str(future.domain.values[index]) + " -> X"
 					future.domain.flags[index] = "X"
 					removed.append(index) # append the index of the pruned value
 				else:
@@ -90,7 +91,9 @@ class Solver:
 		print "|_________"
 
 	def undoPruning(self, change_list, depth):
-		var = self.problem.variables[depth]
+		var = self.assignedVariables[-1]
+		print "changes for variable: " + var.name,
+		print change_list
 		for index in change_list:
 			var.domain.flags[index]="new"
 		self.undo_assignment()
