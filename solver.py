@@ -5,8 +5,8 @@ class Solver:
 		self.problem = problem
 		self.n = len(problem.variables)
 		self.ordering = ordering
-		if ordering == 1:
-			# create a copy of the list
+		self.copiedVariables = list(self.problem.variables)
+		self.assignedVariables = []
 
 	def getNextVariable(self, depth):
 		if self.ordering==0:
@@ -21,13 +21,15 @@ class Solver:
 				pass
 
 	def getVariableByDepth(self, depth):
-		return self.problem.variables[depth]
+		res = self.copiedVariables.pop(0)
+		self.assignedVariables.append(res)
+		return res
 
 	def getVariableByDomain(self):
-		min_domain = len(self.problem.variables[0])
+		min_domain = len(self.copiedVariables[0])
 		min_domain_index = 0
-		for index in range(len(self.problem.variables)):
-			variable = self.problem.variables[index]
+		for index in range(len(self.copiedVariables)):
+			variable = self.copiedVariables[index]
 			domain_size = 0
 			for value in variable.domain:
 				if value.flag != "X":
@@ -35,7 +37,9 @@ class Solver:
 			if domain_size < min_domain:
 				min_domain = domain_size
 				min_domain_index = index
-		return min_domain_index # TODO need to delete it from the list of variables!
+		res = self.copiedVariables.pop(min_domain_index)
+		self.assignedVariables.append(res)
+		return res 
 
 
 	def assign(self, var, value_index):
@@ -91,9 +95,14 @@ class Solver:
 		var = self.problem.variables[depth]
 		for index in change_list:
 			var.domain.flags[index]="new"
+		self.undo_assignment()
 		print var.domain.values
 		print var.domain.flags
 		print "pruning undone"
+
+	def undo_assignment(self):
+		lastAssigned = self.assignedVariables.pop(-1)
+		self.copiedVariables = [lastAssigned] + self.copiedVariables
 
 	def print_state(self):
 		for var in self.problem.variables:
@@ -107,10 +116,15 @@ class Solver:
 			print var.domain.flags
 		print "__________"
 
-
+	def print_vars(self):
+		print "still to assign:",
+		print [var.name for var in self.copiedVariables]
+		print "assignedVariables: ",
+		print [var.name for var in self.assignedVariables]
 
 	def forwardCheck(self, depth):
 		print "DEPTH: " + str(depth)
+		self.print_vars()
 		var = self.getNextVariable(depth)
 		for value_index in range(len(var.domain.values)):
 			self.assign(var, value_index)
@@ -120,7 +134,8 @@ class Solver:
 			consistent = True
 			for future in range(depth+1, self.n):
 				print "FUTURE " + str(future)
-				result = self.revise(self.getVariableByDepth(future), var)
+				self.print_vars()
+				result = self.revise(self.getNextVariable(future), var)
 				removed = result[1]
 				consistent = result[0]
 				if not consistent:
@@ -131,5 +146,8 @@ class Solver:
 				if depth == self.n - 1:
 					self.showSolution()
 				else:
+					for future in range(depth+1, self.n):
+						self.undo_assignment()
 					self.forwardCheck(depth+1)
+		self.undo_assignment()
 			

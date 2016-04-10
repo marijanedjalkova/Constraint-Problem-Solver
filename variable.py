@@ -7,16 +7,19 @@ class Variable:
         self.value = None
         self.domain = domain
 
+    def evaluate(self):
+    	return self.value
+
 class Domain:
 
 	def __init__(self, values):
 		self.values = values
-		self.flags = ["new" for i in range(len(values))]
+		self.flags = ["new" for i in range(len(values))] 
 
 def createDomainFromRange(minValue, maxValue):
 	return Domain(range(minValue, maxValue))
 
-class Constraint:
+class Constraint: # not needed, abstract
 
 	def __init__(self, variable, allowedDomain):
 		self.variable = variable
@@ -31,32 +34,39 @@ def findVarName(expression):
 	else:
 		return findVarName(expression.left)
 
-class Expression():
+def createExpressionFromVar(variable):
+	return Expression(variable, None, None)
 
-	def __init__(self, left, op, right):
-		self.name = left.name + get_op_string(op) + str(right)
+class Expression(): # can be x + 2, x - y, x, 3
+# numbers are always on the right unless an expression is a number
+
+	def __init__(self, left, right, op):
+		if isinstance(left, Variable):
+			self.name = left.name
+		else:
+			self.name = str(left)
+		if right is not None:
+			self.name += get_op_string(op)
+			if isinstance(right, Variable):
+				self.name += right.name
+			else:
+				self.name += str(right)
 		self.left = left
 		self.right = right
 		self.op = op
 
 	def evaluate(self):
-		if isinstance(self.left, Expression):
+		if isinstance(self.left, Expression) or isinstance(self.left, Variable):
 			lhs = self.left.evaluate()
 		else:
-			if isinstance(self.left, Variable):
-				lhs = self.left.value 
-			else:
-				lhs = self.left
+			lhs = self.left
 		if self.right is None:
 			return lhs
 
-		if isinstance(self.right, Expression):
+		if isinstance(self.right, Expression) or isinstance(self.right, Variable):
 			rhs = self.right.evaluate()
 		else:
-			if isinstance(self.right, Variable):
-				rhs = self.right.value 
-			else:
-				rhs = self.right
+			rhs = self.right
 		return self.op(lhs, rhs)
 
 	def substitute(self, value):
@@ -67,7 +77,7 @@ class Expression():
 		else:
 			# right is digit, x+ 2
 			res = self.op(value, self.right)
-		print self.name + " for variable " + str(value) + "returns " + str(res)
+		print "substituting " + str(value) + " in " + self.name +  " gives " + str(res)
 		return res
 
 class ExpressionConstraint(Constraint):
@@ -100,18 +110,6 @@ class ExpressionConstraint(Constraint):
 		return self.op(lvalue, rvalue)
 
 
-class BinaryConstraint(ExpressionConstraint):
-	def __init__(self, lhs, rhs, op):
-		self.lhs = lhs
-		self.rhs = rhs
-		self.op = op
-
-	def isSatisfied(self):
-		return self.op(self.lhs.value, self.rhs.value)
-
-	def valuesSatisfy(self, value1, value2): # irl they are future and present
-		return self.op(value1, value2)
-
 class AllDiffConstraint(Constraint):
 	def __init__(self, variables):
 		self.variables = variables
@@ -123,8 +121,8 @@ class AllDiffConstraint(Constraint):
 	def to_binary(self):
 		constraints = []
 		for index in range(len(self.variables) - 1):
-			constraints.append(BinaryConstraint(self.variables[index], self.variables[index + 1], operator.__ne__))
-			constraints.append(BinaryConstraint(self.variables[index + 1], self.variables[index], operator.__ne__))
+			constraints.append(ExpressionConstraint(createExpressionFromVar(self.variables[index]), createExpressionFromVar(self.variables[index + 1]), operator.__ne__))
+			constraints.append(ExpressionConstraint(createExpressionFromVar(self.variables[index + 1]), createExpressionFromVar(self.variables[index]), operator.__ne__))
 		return constraints
 
 class Problem:
