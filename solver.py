@@ -129,7 +129,7 @@ class Solver:
 
 
 	def forwardCheck(self, depth):
-		print "DEPTH: " + str(depth)
+		#print "DEPTH: " + str(depth)
 		removed = []
 		# self.print_vars()
 		var = self.getNextVariable(depth)
@@ -137,23 +137,18 @@ class Solver:
 			#print "depth " + str(depth)
 			self.assign(var, value_index)
 			if var.value is None:
-				print var.name + " != " + str(value_index + 1)
-				if (depth + 1 + len(self.copiedVariables))!=self.n:
-					print "!!!",
-					print str(depth + 1 + len(self.copiedVariables)),
-					print " depth " + str(depth) + " list " + str(len(self.copiedVariables)),
-					print " next var would be " + self.copiedVariables[0].name
+				#print var.name + " != " + str(value_index + 1)
 				continue
 			#self.print_state()
-			print "-> " + var.name + " = " + str(var.value)
+			print "-> " + var.name + " = " + str(var.value) + " ",
 			#if (depth + 1 + len(self.copiedVariables)) < 81:
 			#	print "Ohhhhh"
 			consistent = True
 			future = 0
 			for future in range(depth+1, self.n):
 				#print "~~~~~~~~~~~~~~~~~~~~~~~~~"
-				if depth == 13:
-					print "FUTURE " + str(future)
+				#if depth == 13:
+					#print "FUTURE " + str(future)
 				# self.print_vars()
 				if future + len(self.copiedVariables) < self.n: # this needs fixing
 					print "Problem " + str(len(self.copiedVariables))
@@ -164,11 +159,7 @@ class Solver:
 
 				consistent = result[0]
 				if not consistent:
-					print "not consistent, backtrack "
-					print " before backtracking depth now is " + str(depth),
-					print " and copiedvars " + str(len(self.copiedVariables)) 
-					print "next var is " + self.copiedVariables[0].name,
-					print self.copiedVariables[1].name
+					#print "not consistent, backtrack "
 					break
 			if consistent:
 				if depth == self.n - 1:
@@ -177,33 +168,14 @@ class Solver:
 				else:
 					for future in range(depth+1, self.n):
 						self.undo_assignment()
-					if depth == 14:
-						print "will go forward now " + var.name,
-						print " depth now is " + str(depth),
-						print " and copiedvars " + str(len(self.copiedVariables)) 
-						print "next var is " + self.copiedVariables[0].name,
-						print self.copiedVariables[1].name
 					self.forwardCheck(depth+1)
 					# if we are here, it means that variables finished for the
 					# next variable. This means that this is inconsistent
-					print "GO BACK!!!"
-			print "TO UNDO " + str(future - depth) + " for f=" + str(future) + " and d=" + str(depth)
+					#print "GO BACK!!!"
 			if (future < self.n - 1):
 				self.undoPruning(removed, future - depth)
 			else:
 				self.undoPruning(removed, 1)
-			print "After pruning undone ",
-			print str(depth + 1 + len(self.copiedVariables)),
-			print " depth " + str(depth) + " list " + str(len(self.copiedVariables)),
-			print " next var would be " + self.copiedVariables[0].name
-		
-		#self.undo_assignment()
-		print "variables finished for variable " + var.name,
-		print " depth now is " + str(depth),
-		print " and copiedvars " + str(len(self.copiedVariables)),
-		print "next var is " + self.copiedVariables[0].name,
-		print self.copiedVariables[1].name
-		print "last assigned var was " + self.assignedVariables[-1].name
 		# at this point the values in the domain ended 
 		# with no success, so need to backtrack 
 			

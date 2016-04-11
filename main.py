@@ -8,14 +8,14 @@ def get_square_index(square_index):
 	return 27 * div + 3 * mod
 
 
-def mini_sudoku():
-	variables = [Variable(("v"+str(i)), createDomainFromRange(1, 4)) for i in range(9)]
+def mini_sudoku(size):
+	variables = [Variable(("v"+str(i)), createDomainFromRange(1, size+1)) for i in range(size*size)]
 	constraints = []
-	for i in range(3):
-		current_row = variables[(i*3):(i*3 + 3)]
+	for i in range(size):
+		current_row = variables[(i*size):(i*size + size)]
 		adc = AllDiffConstraint(current_row)
 		constraints.extend(adc.to_binary())
-		current_col = variables[i::3]
+		current_col = variables[i::size]
 		adc = AllDiffConstraint(current_col)
 		constraints.extend(adc.to_binary())
 	square = []	
@@ -29,6 +29,7 @@ def mini_sudoku():
 	
 	solver = Solver(problem, 0)
 	solver.forwardCheck(0)
+
 
 def sudoku():
 	variables = [Variable(("v"+str(i)), createDomainFromRange(1, 10)) for i in range(81)]
@@ -56,7 +57,7 @@ def sudoku():
 
 if __name__ == '__main__':
 	print "________________________________________________________________"
-	mini_sudoku()		
+	mini_sudoku(3)		
 
 	"""
 	d1 = createDomainFromRange(3, 6)
