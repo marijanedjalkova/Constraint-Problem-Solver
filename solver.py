@@ -95,7 +95,7 @@ class Solver:
 			print "|" + var.name + ": " + str(var.value)
 		print "|_________"
 
-	def undoPruning(self, change_list, depth):
+	def undoPruning(self, change_list):
 		var = self.assignedVariables[-1]
 		# print "changes for variable: " + var.name,
 		# print change_list
@@ -134,12 +134,13 @@ class Solver:
 
 	def forwardCheck(self, depth):
 		print "DEPTH: " + str(depth)
+		removed = []
 		# self.print_vars()
 		var = self.getNextVariable(depth)
 		for value_index in range(len(var.domain.values)):
 			print "depth " + str(depth)
-			#if (depth + 1 + len(self.copiedVariables)) < 81:
-			#	print "Ahhhhh" + str(depth + 1 + len(self.copiedVariables))
+			if (depth + 1 + len(self.copiedVariables)) < 81:
+				print "Ahhhhh " + str(len(self.copiedVariables))
 			self.assign(var, value_index)
 			if var.value is None:
 			#	print "continue"
@@ -153,15 +154,16 @@ class Solver:
 				#print "~~~~~~~~~~~~~~~~~~~~~~~~~"
 				print "FUTURE " + str(future)
 				# self.print_vars()
-				#if future + len(self.copiedVariables) < 81: # this needs fixing
-					#print "Problem "
-					#sys.exit()
+				if future + len(self.copiedVariables) < 81: # this needs fixing
+					print "Problem " + str(len(self.copiedVariables))
+					if len(self.copiedVariables)==0:
+						sys.exit()
 				result = self.revise(self.getNextVariable(future), var)
+				print "after revising"
 				removed = result[1]
 				consistent = result[0]
 				if not consistent:
-					print "not consistent, backtrack " + str(len(removed)) + " steps"
-					self.undoPruning(removed, future)
+					print "not consistent, backtrack "
 					break
 			if consistent:
 				if depth == self.n - 1:
@@ -170,6 +172,12 @@ class Solver:
 				else:
 					for future in range(depth+1, self.n):
 						self.undo_assignment()
+					print "undid assignments"
+					if (depth + 1 + len(self.copiedVariables)) < 81:
+						print "Hmm" + str(depth + 1 + len(self.copiedVariables))
 					self.forwardCheck(depth+1)
-			print "here"
+			print "before uhm " + str(depth)
+			self.undoPruning(removed)
+		print "uhmmmm"
+		self.undo_assignment()
 			
