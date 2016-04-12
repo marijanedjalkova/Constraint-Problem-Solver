@@ -65,7 +65,6 @@ class Solver:
 		# could do without Xs, but helps seeing
 		# remember them in a list.
 		# if anything has an empty domain, return false
-
 		removed = []
 		constraint = self.findConstraint(future, present)
 		if constraint is None:
@@ -77,9 +76,8 @@ class Solver:
 				if future.domain.flags[index] != "X":
 					satisfies = constraint.valuesSatisfy(future.domain.values[index], present.value)
 					if not satisfies:
-						#print str(future.domain.values[index]) + " -> X",
 						future.domain.flags[index] = "X"
-						removed.append(index) # append the index of the pruned value
+						removed.append((future, index)) # append the index of the pruned value
 					else:
 						domain_not_empty = True 
 		return (domain_not_empty, removed)
@@ -91,11 +89,9 @@ class Solver:
 		print "|_________"
 
 	def undoPruning(self, change_list, num_assignments):
-		var = self.assignedVariables[-1]
-		# print "changes for variable: " + var.name,
-		# print change_list
-		for index in change_list:
-			var.domain.flags[index]="new"
+		for index in range(len(change_list)):
+			var = change_list[index][0]
+			var.domain.flags[change_list[index][1]]="new"
 		for n in range(num_assignments):
 			self.undo_assignment()
 
@@ -129,9 +125,6 @@ class Solver:
 
 
 	def forwardCheck(self, depth):
-		#print "DEPTH: " + str(depth)
-		removed = []
-		# self.print_vars()
 		var = self.getNextVariable(depth)
 		for value_index in range(len(var.domain.values)):
 			#print "depth " + str(depth)
@@ -140,26 +133,15 @@ class Solver:
 				#print var.name + " != " + str(value_index + 1)
 				continue
 			#self.print_state()
-			print "-> " + var.name + " = " + str(var.value) + " ",
-			#if (depth + 1 + len(self.copiedVariables)) < 81:
-			#	print "Ohhhhh"
+			print "-> " + var.name + " = " + str(var.value) + " "
 			consistent = True
 			future = 0
+			removed = []
 			for future in range(depth+1, self.n):
-				#print "~~~~~~~~~~~~~~~~~~~~~~~~~"
-				#if depth == 13:
-					#print "FUTURE " + str(future)
-				# self.print_vars()
-				if future + len(self.copiedVariables) < self.n: # this needs fixing
-					print "Problem " + str(len(self.copiedVariables))
-					if len(self.copiedVariables)==0:
-						sys.exit()
 				result = self.revise(self.getNextVariable(future), var)
-				removed.extend(result[1]) # ???
-
+				removed.extend(result[1])
 				consistent = result[0]
 				if not consistent:
-					#print "not consistent, backtrack "
 					break
 			if consistent:
 				if depth == self.n - 1:
@@ -171,7 +153,6 @@ class Solver:
 					self.forwardCheck(depth+1)
 					# if we are here, it means that variables finished for the
 					# next variable. This means that this is inconsistent
-					#print "GO BACK!!!"
 			if (future < self.n - 1):
 				self.undoPruning(removed, future - depth)
 			else:

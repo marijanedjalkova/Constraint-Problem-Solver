@@ -57,8 +57,8 @@ def sudoku():
 
 if __name__ == '__main__':
 	print "________________________________________________________________"
-	mini_sudoku(3)		
-
+	#mini_sudoku(4)	
+	sudoku()
 	"""
 	d1 = createDomainFromRange(3, 6)
 	d2 = createDomainFromRange(2, 4)
