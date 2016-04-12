@@ -10,10 +10,10 @@ class Solver:
 		self.assignedVariables = []
 		self.task_type = task_type
 
-	def getNextVariable(self, depth):
+	def getNextVariable(self):
 		if self.ordering==0:
 			# default
-			return self.getVariableByDepth(depth)
+			return self.getVariableByDepth()
 		else:
 			if self.ordering==1:
 				# dynamic
@@ -22,7 +22,7 @@ class Solver:
 				# mb static given by user
 				pass
 
-	def getVariableByDepth(self, depth):
+	def getVariableByDepth(self):
 		res = self.copiedVariables.pop(0) # this pop works
 		self.assignedVariables.append(res)
 		return res
@@ -103,10 +103,10 @@ class Solver:
 			self.undo_assignment()
 
 	def undo_assignment(self):
-		lastAssigned = self.assignedVariables.pop(-1) # this pop works!
+		lastAssigned = self.assignedVariables.pop(-1) 
 		self.copiedVariables = [lastAssigned] + self.copiedVariables
 
-	def print_state(self):
+	def print_state_short(self):
 		for var in self.problem.variables:
 			for index in range(len(var.domain.values)):
 				print var.name + ": " + str(var.domain.values[index]) + ", " + var.domain.flags[index]
@@ -132,20 +132,18 @@ class Solver:
 
 
 	def forwardCheck(self, depth):
-		var = self.getNextVariable(depth)
+		var = self.getNextVariable()
 		for value_index in range(len(var.domain.values)):
 			#print "depth " + str(depth)
 			self.assign(var, value_index)
 			if var.value is None:
-				#print var.name + " != " + str(value_index + 1)
 				continue
-			#self.print_state()
-			print "-> " + var.name + " = " + str(var.value) + " "
+			# print "-> " + var.name + " = " + str(var.value) + " "
 			consistent = True
 			future = 0
 			removed = []
 			for future in range(depth+1, self.n):
-				result = self.revise(self.getNextVariable(future), var)
+				result = self.revise(self.getNextVariable(), var)
 				removed.extend(result[1])
 				consistent = result[0]
 				if not consistent:
