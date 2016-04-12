@@ -2,12 +2,13 @@ from variable import *
 import sys
 
 class Solver:
-	def __init__(self, problem, ordering):
+	def __init__(self, problem, ordering, task_type):
 		self.problem = problem
 		self.n = len(problem.variables)
 		self.ordering = ordering
 		self.copiedVariables = list(self.problem.variables)
 		self.assignedVariables = []
+		self.task_type = task_type
 
 	def getNextVariable(self, depth):
 		if self.ordering==0:
@@ -84,9 +85,15 @@ class Solver:
 
 	def showSolution(self):
 		print "|Solution:======================================================================"
-		for var in self.problem.variables:
-			print "|" + var.name + ": " + str(var.value)
-		print "|_________"
+		if self.task_type=="sudoku":
+			for i in range(9):
+				for j in range(9):
+					print str(self.problem.variables[i*9+j].value) + " ",
+				print "\n"
+		else:
+			for var in self.problem.variables:
+				print "|" + var.name + ": " + str(var.value)
+			print "|_________"
 
 	def undoPruning(self, change_list, num_assignments):
 		for index in range(len(change_list)):
@@ -146,7 +153,6 @@ class Solver:
 			if consistent:
 				if depth == self.n - 1:
 					self.showSolution()
-					sys.exit()
 				else:
 					for future in range(depth+1, self.n):
 						self.undo_assignment()

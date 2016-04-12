@@ -51,7 +51,7 @@ def sudoku():
 		constraints.extend(adc.to_binary())	
 	problem = Problem(variables, constraints)
 	
-	solver = Solver(problem, 0)
+	solver = Solver(problem, 1, "sudoku")
 	solver.forwardCheck(0)
 
 
