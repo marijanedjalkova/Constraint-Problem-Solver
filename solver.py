@@ -20,6 +20,7 @@ class Solver:
 		self.copiedVariables = list(self.problem.variables)
 		self.assignedVariables = []
 		self.task_type = task_type
+		self.nodes = 0
 
 	def getNextVariable(self):
 		""" Depending on the ordering we decided in the beginning
