@@ -93,10 +93,11 @@ def sudoku():
 		constraints.extend(adc.to_binary())	
 	problem = Problem(variables, constraints)
 	
-	solver = Solver(problem, 1, "sudoku")
-	solver.forwardCheck(0)
+	#solver = Solver(problem, 0, "sudoku")
+	#solver.forwardCheck(0)
 	solver2 = Solver(problem, 1, "sudoku")
 	solver2.forwardCheck(0)
+	print "FINAL " + str(solver2.nodes)
 
 
 if __name__ == '__main__':

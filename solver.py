@@ -121,6 +121,7 @@ class Solver:
 		prints a list of variables with assigned values.
 		For sudoku, prints a grid. """
 		print "|Solution:======================================================================"
+		print "Nodes visited " + str(self.nodes)
 		if self.task_type=="sudoku":
 			for i in range(9):
 				for j in range(9):
@@ -190,6 +191,11 @@ class Solver:
 				# this value is not in the domain anymore
 				continue
 			# print "-> " + var.name + " = " + str(var.value) + " "
+			self.nodes += 1
+			if self.nodes % 1000 == 0:
+				print "Nodes " + str(self.nodes)
+				print "Depth " + str(depth)
+				print self.assignedVariables[0].name + str(self.assignedVariables[0].value)
 			consistent = True
 			future = 0
 			removed = []
