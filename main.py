@@ -40,8 +40,38 @@ def mini_sudoku(size):
 
 
 def sudoku():
-	# Generates a sudoku.
+	# Generates a sudoku. No values given at all
 	variables = [Variable(("v"+str(i)), createDomainFromRange(1, 10)) for i in range(81)]
+	variables[4].domain = Domain([9])
+	variables[5].domain = Domain([4])
+	variables[10].domain = Domain([7])
+	variables[12].domain = Domain([6])
+	variables[15].domain = Domain([3])
+	variables[21].domain = Domain([1])
+	variables[25].domain = Domain([6])
+	variables[27].domain = Domain([6])
+	variables[28].domain = Domain([4])
+	variables[29].domain = Domain([8])
+	variables[35].domain = Domain([5])
+	variables[36].domain = Domain([9])
+	variables[39].domain = Domain([2])
+	variables[44].domain = Domain([6])
+	variables[47].domain = Domain([2])
+	variables[49].domain = Domain([4])
+	variables[51].domain = Domain([7])
+	variables[52].domain = Domain([9])
+	variables[54].domain = Domain([8])
+	variables[55].domain = Domain([1])
+	variables[57].domain = Domain([4])
+	variables[59].domain = Domain([9])
+	variables[63].domain = Domain([2])
+	variables[65].domain = Domain([5])
+	variables[68].domain = Domain([8])
+	variables[70].domain = Domain([3])
+	variables[73].domain = Domain([6])
+	variables[74].domain = Domain([4])
+	variables[76].domain = Domain([1])
+	variables[77].domain = Domain([3])
 	constraints = []
 	for i in range(9):
 		# add row constraints
@@ -65,6 +95,8 @@ def sudoku():
 	
 	solver = Solver(problem, 1, "sudoku")
 	solver.forwardCheck(0)
+	solver2 = Solver(problem, 1, "sudoku")
+	solver2.forwardCheck(0)
 
 
 if __name__ == '__main__':
